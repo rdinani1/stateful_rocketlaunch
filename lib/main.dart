@@ -51,6 +51,8 @@ class _CounterWidgetState extends State<CounterWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final bool liftoff = _counter == 100;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rocket Launch Controller'),
@@ -66,9 +68,9 @@ class _CounterWidgetState extends State<CounterWidget> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '$_counter',
+                liftoff ? 'LIFTOFF!' : '$_counter',
                 style: TextStyle(
-                  fontSize: 50.0,
+                  fontSize: liftoff ? 42.0 : 50.0,
                   fontWeight: FontWeight.bold,
                   color: _statusColor(),
                 ),
