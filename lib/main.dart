@@ -9,9 +9,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Rocket Launch Controller',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const CounterWidget(),
     );
   }
@@ -27,6 +25,24 @@ class CounterWidget extends StatefulWidget {
 class _CounterWidgetState extends State<CounterWidget> {
   int _counter = 0;
 
+  void _ignite() {
+    setState(() {
+      if (_counter < 100) _counter++;
+    });
+  }
+
+  void _decrement() {
+    setState(() {
+      if (_counter > 0) _counter--;
+    });
+  }
+
+  void _reset() {
+    setState(() {
+      _counter = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,9 +55,10 @@ class _CounterWidgetState extends State<CounterWidget> {
           Center(
             child: Container(
               color: Colors.blue,
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
               child: Text(
                 '$_counter',
-                style: const TextStyle(fontSize: 50.0),
+                style: const TextStyle(fontSize: 50.0, color: Colors.white),
               ),
             ),
           ),
@@ -63,30 +80,25 @@ class _CounterWidgetState extends State<CounterWidget> {
 
           const SizedBox(height: 20),
 
-          // 🔥 Ignite Button
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                if (_counter < 100) {
-                  _counter++;
-                }
-              });
-            },
-            child: const Text('Ignite'),
-          ),
-
-          const SizedBox(height: 10),
-
-          // ⬇ Decrement Button
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                if (_counter > 0) {
-                  _counter--;
-                }
-              });
-            },
-            child: const Text('Decrement'),
+          // Buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: _ignite,
+                child: const Text('Ignite'),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: _decrement,
+                child: const Text('Decrement'),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: _reset,
+                child: const Text('Reset'),
+              ),
+            ],
           ),
         ],
       ),
