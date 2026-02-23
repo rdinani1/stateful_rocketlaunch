@@ -25,23 +25,48 @@ class CounterWidget extends StatefulWidget {
 class _CounterWidgetState extends State<CounterWidget> {
   int _counter = 0;
 
-  void _ignite() {
+  // Bonus: prevents popup from spamming while staying at 100
+  bool _liftoffDialogShown = false;
+
+  void _setCounter(int next) {
+    final int clamped = next.clamp(0, 100);
+
+    // true only when we cross into 100 from below
+    final bool firstTimeHitting100 = (_counter < 100 && clamped == 100);
+
     setState(() {
-      if (_counter < 100) _counter++;
+      _counter = clamped;
+
+      // if we move away from 100, allow popup next time we hit 100
+      if (_counter < 100) _liftoffDialogShown = false;
     });
+
+    if (firstTimeHitting100 && !_liftoffDialogShown) {
+      _liftoffDialogShown = true;
+
+      // show after the frame so it doesn't fight build/setState
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('🚀 LIFTOFF!'),
+            content: const Text('Launch Successful!'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      });
+    }
   }
 
-  void _decrement() {
-    setState(() {
-      if (_counter > 0) _counter--;
-    });
-  }
-
-  void _reset() {
-    setState(() {
-      _counter = 0;
-    });
-  }
+  void _ignite() => _setCounter(_counter + 1);
+  void _decrement() => _setCounter(_counter - 1);
+  void _reset() => _setCounter(0);
 
   Color _statusColor() {
     if (_counter == 0) return Colors.red;
@@ -84,11 +109,7 @@ class _CounterWidgetState extends State<CounterWidget> {
             max: 100,
             divisions: 100,
             value: _counter.toDouble(),
-            onChanged: (double value) {
-              setState(() {
-                _counter = value.toInt();
-              });
-            },
+            onChanged: (double value) => _setCounter(value.toInt()),
             activeColor: Colors.blue,
             inactiveColor: Colors.red,
           ),
