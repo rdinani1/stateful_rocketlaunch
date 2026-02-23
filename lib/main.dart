@@ -74,6 +74,20 @@ class _CounterWidgetState extends State<CounterWidget> {
             },
             child: const Text('Ignite'),
           ),
+
+          const SizedBox(height: 10),
+
+          // ⬇ Decrement Button
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                if (_counter > 0) {
+                  _counter--;
+                }
+              });
+            },
+            child: const Text('Decrement'),
+          ),
         ],
       ),
     );
